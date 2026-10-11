@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bán Trà Sữa - Mobile UI Game</title>
+    <style>
+        :root {
+            --bg-cream: #faf0e6;
+            --cream-card: #fff8f0;
+            --pink-main: #ff94b9;
+            --brown-text: #5a3e2b;
+            --border-brown: #d7c2b0;
+            --green-bar: #8bc34a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #f3ece1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* MÀN HÌNH MÔ PHỎNG ĐIỆN THOẠI */
+        .phone-container {
+            width: 420px;
+            height: 780px;
+            background: var(--bg-cream);
+            border: 8px solid #4a3525;
+            border-radius: 36px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 1. HEADER THANH TRẠNG THÁI */
+        .status-header {
+            background: #fffdfa;
+            padding: 10px 15px;
+            border-bottom: 2px solid var(--border-brown);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--brown-text);
+        }
+
+        .status-box {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 2. KHU VỰC KHÁCH GỌI MÓN (CÓ MÁI XẾP CANOPY) */
+        .customer-area {
+            background: #fffdfa;
+            height: 180px;
+            border-bottom: 2px solid var(--border-brown);
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .canopy {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 18px;
+            background: repeating-linear-gradient(90deg, #ff80ab, #ff80ab 20px, #ffffff 20px, #ffffff 40px);
+            border-bottom: 2px solid var(--border-brown);
+        }
+
+        .customer-avatar {
+            font-size: 50px;
+            margin-top: 15px;
+        }
+
+        .order-bubble {
+            background: #ffffff;
+            border: 2px solid var(--border-brown);
+            border-radius: 14px;
+            padding: 8px 12px;
+            flex: 1;
+            margin-top: 15px;
+            font-size: 11px;
+            color: var(--brown-text);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+        }
+
+        .patience-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 6px;
+            width: 100%;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .patience-fill {
+            background: var(--green-bar);
+            height: 100%;
+            width: 100%;
+            transition: width 0.2s linear;
+        }
+
+        /* 3. KHU VỰC QUẦY TRÀ (BÌNH ĐỰNG & MÁY DẬP) */
+        .tea-station {
+            background: #fdf5ec;
+            padding: 10px;
+            border-bottom: 2px solid var(--border-brown);
+        }
+
+        .section-label {
+            font-size: 10px;
+            font-weight: bold;
+            background: #e2cbba;
+            color: var(--brown-text);
+            padding: 2px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .dispenser-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .cup-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .btn-cup {
+            background: #ffffff;
+            border: 1.5px solid var(--border-brown);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .dispenser-item {
+            background: #ffffff;
+            border: 1.5px solid var(--border-brown);
+            border-radius: 8px;
+            padding: 5px 4px;
+            text-align: center;
+            font-size: 8px;
+            font-weight: bold;
+            width: 48px;
+            cursor: pointer;
+        }
+
+        .dispenser-item.locked {
+            opacity: 0.5;
+            background: #e0e0e0;
+        }
+
+        .sealer-machine {
+            background: #d1c4e9;
+            border: 1.5px solid #7e57c2;
+            border-radius: 8px;
+            padding: 6px;
+            text-align: center;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        /* 4. KHU VỰC PHA LY & TOPPING */
+        .mixing-station {
+            flex: 1;
+            background: #faf0e6;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .prep-area {
+            width: 110px;
+            background: #e2cbba;
+            border: 1.5px solid var(--border-brown);
+            border-radius: 10px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .current-cup-display {
+            width: 70px;
+            height: 90px;
+            background: rgba(255,255,255,0.8);
+            border: 2px dashed var(--border-brown);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            text-align: center;
+            padding: 4px;
+        }
+
+        .topping-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .topping-box {
+            background: #ffffff;
+            border: 1.5px solid var(--border-brown);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .topping-box.locked {
+            background: #e0e0e0;
+            opacity: 0.6;
+        }
+
+        /* BUTTONS */
+        .btn-action {
+            background: var(--pink-main);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* MODAL MỞ ĐẦU */
+        #startModal {
+            position: absolute;
+            inset: 0;
+            background: rgba(250, 240, 230, 0.96);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-card {
+            background: #fff;
+            border: 3px solid var(--pink-main);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            width: 320px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <!-- MODAL ĐẶT TÊN GAME -->
+        <div id="startModal">
+            <div class="modal-card">
+                <div style="font-size: 40px;">🧋🌸</div>
+                <h3 style="color: var(--brown-text); margin: 8px 0;">BÁN TRÀ SỮA CHIBI</h3>
+                <p style="font-size: 11px; color: #8d6e63; margin-bottom: 15px;">Mô phỏng tiệm trà sữa chuẩn Việt Nam!</p>
+                <input type="text" id="inputStoreName" value="Hân Hân" style="width:100%; padding:8px; text-align:center; margin-bottom:12px; border-radius:8px; border:1px solid #ccc;">
+                <button class="btn-action" style="padding: 10px;" onclick="startGame()">MỞ CỬA BÁN HÀNG</button>
+            </div>
+        </div>
+
+        <!-- 1. HEADER STATUS -->
+        <div class="status-header">
+            <div class="status-box">📅 Ngày <span id="uiDay">1</span> (⏰ <span id="uiTime">11:15</span>)</div>
+            <div class="status-box">🪙 <span id="uiMoney">100k</span></div>
+            <div class="status-box">⭐ 4.8 / 5.0</div>
+        </div>
+
+        <!-- 2. KHU KHÁCH HÀNG -->
+        <div class="customer-area">
+            <div class="canopy"></div>
+            <div class="customer-avatar" id="uiCustomerAvatar">👨</div>
+            <div class="order-bubble">
+                <div id="uiOrderText">Cho anh 1 ly Trà sữa size M với Trân châu đen nha, cảm ơn em!</div>
+                <div style="font-size: 9px; font-weight: bold; margin-top: 4px; color: #8bc34a;">KIÊN NHẪN</div>
+                <div class="patience-bar">
+                    <div class="patience-fill" id="uiPatienceBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. QUẦY TRÀ -->
+        <div class="tea-station">
+            <span class="section-label">QUẦY TRÀ</span>
+            <div class="dispenser-grid">
+                <!-- Cốc ly -->
+                <div class="cup-stack">
+                    <button class="btn-cup" onclick="selectCup('M')">Ly M</button>
+                    <button class="btn-cup" onclick="selectCup('L')">Ly L</button>
+                </div>
+
+                <!-- Các bình trà -->
+                <div class="dispenser-item" onclick="selectTea('Trà Sữa')">🧋<br>TRÀ SỮA</div>
+                <div class="dispenser-item" onclick="selectTea('Matcha')">🍃<br>MATCHA</div>
+                <div class="dispenser-item locked">🥤<br>HỒNG TRÀ</div>
+                <div class="dispenser-item locked">🍵<br>LỤC TRÀ</div>
+                <div class="dispenser-item locked">🍂<br>Ô LONG</div>
+                <div class="dispenser-item locked">🧋<br>TRÀ THÁI</div>
+
+                <!-- Máy dập nắp -->
+                <div class="sealer-machine">
+                    🧋<br>MÁY DẬP
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. PHA LY & TOPPING -->
+        <div class="mixing-station">
+            <div class="prep-area">
+                <span class="section-label" style="font-size: 9px;">PHA LY</span>
+                <div class="current-cup-display" id="uiCupDisplay">
+                    Lấy ly M hoặc L
+                </div>
+                <button class="btn-action" style="background:#8bc34a; font-size:10px;" onclick="deliverCup()">GIAO LY</button>
+                <button class="btn-action" style="background:#ef5350; font-size:9px;" onclick="resetCup()">LÀM LẠI</button>
+            </div>
+
+            <div class="topping-grid">
+                <div class="topping-box" onclick="addTopping('Trân châu đen')">
+                    ⚫<br>Trân châu đen
+                </div>
+                <div class="topping-box" onclick="addTopping('Trân châu trắng')">
+                    ⚪<br>Trân châu trắng
+                </div>
+                <div class="topping-box locked">🔒</div>
+                <div class="topping-box locked">🔒</div>
+                <div class="topping-box locked">🔒</div>
+                <div class="topping-box locked">🔒</div>
+                <div class="topping-box locked">🔒</div>
+                <div class="topping-box locked">🔒</div>
+                <div class="topping-box locked">🔒</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var game = {
+            day: 1,
+            hour: 11,
+            minute: 15,
+            money: 100,
+            patience: 100,
+            currentCup: { size: null, tea: null, toppings: [] },
+            currentOrder: { size: 'M', tea: 'Trà Sữa', topping: 'Trân châu đen', price: 35 }
+        };
+
+        var patienceInterval;
+
+        function startGame() {
+            document.getElementById('startModal').style.display = 'none';
+            startPatienceTimer();
+            updateUI();
+        }
+
+        function startPatienceTimer() {
+            clearInterval(patienceInterval);
+            game.patience = 100;
+            patienceInterval = setInterval(function() {
+                game.patience -= 2;
+                document.getElementById('uiPatienceBar').style.width = game.patience + '%';
+
+                if(game.patience <= 0) {
+                    clearInterval(patienceInterval);
+                    alert("Khách hàng đợi quá lâu nên đã bỏ đi mất rồi! 😭");
+                    nextCustomer();
+                }
+            }, 500);
+        }
+
+        function selectCup(size) {
+            game.currentCup.size = size;
+            updateCupDisplay();
+        }
+
+        function selectTea(teaName) {
+            if(!game.currentCup.size) return alert("Bạn chưa chọn Ly M hoặc Ly L!");
+            game.currentCup.tea = teaName;
+            updateCupDisplay();
+        }
+
+        function addTopping(toppingName) {
+            if(!game.currentCup.tea) return alert("Bạn chưa rót Trà vào ly!");
+            game.currentCup.toppings.push(toppingName);
+            updateCupDisplay();
+        }
+
+        function updateCupDisplay() {
+            var box = document.getElementById('uiCupDisplay');
+            var txt = "";
+            if(game.currentCup.size) txt += "Ly " + game.currentCup.size + "<br>";
+            if(game.currentCup.tea) txt += "<b>" + game.currentCup.tea + "</b><br>";
+            if(game.currentCup.toppings.length > 0) txt += "<span style='font-size:8px; color:#ad1457;'>" + game.currentCup.toppings.join(', ') + "</span>";
+            
+            box.innerHTML = txt || "Lấy ly M hoặc L";
+        }
+
+        function resetCup() {
+            game.currentCup = { size: null, tea: null, toppings: [] };
+            updateCupDisplay();
+        }
+
+        function deliverCup() {
+            if(!game.currentCup.size || !game.currentCup.tea) {
+                return alert("Ly trà chưa làm xong!");
+            }
+
+            // Kiểm tra món đúng yêu cầu
+            var c = game.currentCup;
+            var o = game.currentOrder;
+
+            if(c.size === o.size && c.tea === o.tea && c.toppings.includes(o.topping)) {
+                clearInterval(patienceInterval);
+                game.money += o.price;
+                alert("🎉 Pha đúng chuẩn! Khách trả " + o.price + "k xu!");
+                nextCustomer();
+            } else {
+                alert("❌ Pha sai món khách yêu cầu rồi! Khách không chịu nhận ly này.");
+            }
+        }
+
+        function nextCustomer() {
+            resetCup();
+            var customers = ["👨", "👩", "👧", "🧑🎓"];
+            var randCust = customers[Math.floor(Math.random() * customers.length)];
+            document.getElementById('uiCustomerAvatar').innerText = randCust;
+
+            // Đổi order ngẫu nhiên
+            var sizes = ['M', 'L'];
+            var toppings = ['Trân châu đen', 'Trân châu trắng'];
+            var s = sizes[Math.floor(Math.random() * sizes.length)];
+            var top = toppings[Math.floor(Math.random() * toppings.length)];
+
+            game.currentOrder = { size: s, tea: 'Trà Sữa', topping: top, price: (s === 'M' ? 35 : 45) };
+            document.getElementById('uiOrderText').innerText = "Cho em 1 ly Trà sữa size " + s + " với " + top + " nha, cảm ơn em!";
+
+            updateUI();
+            startPatienceTimer();
+        }
+
+        function updateUI() {
+            document.getElementById('uiDay').innerText = game.day;
+            document.getElementById('uiMoney').innerText = game.money + "k";
+        }
+    </script>
+</body>
+</html>
